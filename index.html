@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-7-8呼吸法练习辅助工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #a8edea, #fed6e3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(168, 237, 234, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0d0;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .visualization-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .breath-animation {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 30px;
+        }
+        
+        .circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .circle-outer {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .circle-middle {
+            width: 70%;
+            height: 70%;
+        }
+        
+        .breath-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 1s ease;
+            box-shadow: 0 0 30px rgba(106, 17, 203, 0.5);
+        }
+        
+        .timer {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .controls-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .phase-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 5px;
+        }
+        
+        .phase {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+        
+        .phase.active {
+            opacity: 1;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .phase-inhale {
+            background-color: rgba(72, 187, 120, 0.7);
+            color: white;
+        }
+        
+        .phase-hold {
+            background-color: rgba(66, 153, 225, 0.7);
+            color: white;
+        }
+        
+        .phase-exhale {
+            background-color: rgba(237, 100, 166, 0.7);
+            color: white;
+        }
+        
+        .controls {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #b0b0d0;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 700;
+            color: #6a11cb;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #6a11cb;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.7);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-start {
+            background: linear-gradient(to right, #48bb78, #38a169);
+            color: white;
+        }
+        
+        .btn-pause {
+            background: linear-gradient(to right, #ed8936, #dd6b20);
+            color: white;
+        }
+        
+        .btn-reset {
+            background: linear-gradient(to right, #a0aec0, #718096);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        .cycles-counter {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-top: 10px;
+            color: #b0b0d0;
+        }
+        
+        .cycles-value {
+            font-weight: 700;
+            color: #6a11cb;
+            font-size: 1.8rem;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+            color: #a8edea;
+            font-size: 1.5rem;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            line-height: 1.7;
+            color: #b0b0d0;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .instructions strong {
+            color: #fed6e3;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #8888aa;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .breath-animation {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .breath-indicator {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .timer {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .phase-indicator {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>4-7-8 呼吸法练习辅助工具</h1>
+            <p class="subtitle">基于Andrew Weil博士推广的放松技巧，有助于减轻焦虑、改善睡眠。按照引导完成吸气4秒、屏息7秒、呼气8秒的呼吸循环。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="visualization-section">
+                <div class="breath-animation">
+                    <div class="circle circle-outer"></div>
+                    <div class="circle circle-middle"></div>
+                    <div class="breath-indicator" id="breathIndicator">
+                        <div class="timer" id="timer">0</div>
+                    </div>
+                </div>
+                
+                <div class="phase-indicator">
+                    <div class="phase phase-inhale" id="phaseInhale">
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                        <div>吸气</div>
+                        <div class="phase-time">4秒</div>
+                    </div>
+                    <div class="phase phase-hold" id="phaseHold">
+                        <i class="fas fa-pause"></i>
+                        <div>屏息</div>
+                        <div class="phase-time">7秒</div>
+                    </div>
+                    <div class="phase phase-exhale" id="phaseExhale">
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <div>呼气</div>
+                        <div class="phase-time">8秒</div>
+                    </div>
+                </div>
+                
+                <div class="cycles-counter">
+                    已完成循环: <span class="cycles-value" id="cycleCount">0</span>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">吸气时间 (秒)</label>
+                        <div class="slider-container">
+                            <input type="range" id="inhaleSlider" min="2" max="10" step="1" value="4">
+                            <span class="slider-value" id="inhaleValue">4</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">屏息时间 (秒)</label>
+                        <div class="slider-container">
+                            <input type="range" id="holdSlider" min="4" max="15" step="1" value="7">
+                            <span class="slider-value" id="holdValue">7</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">呼气时间 (秒)</label>
+                        <div class="slider-container">
+                            <input type="range" id="exhaleSlider" min="4" max="20" step="1" value="8">
+                            <span class="slider-value" id="exhaleValue">8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-start" id="startBtn">
+                        <i class="fas fa-play"></i> 开始练习
+                    </button>
+                    <button class="btn-pause" id="pauseBtn">
+                        <i class="fas fa-pause"></i> 暂停
+                    </button>
+                    <button class="btn-reset" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>4-7-8呼吸法练习指南</h2>
+            <ol>
+                <li>找一个舒适的位置坐下或躺下，背部挺直</li>
+                <li>将舌尖抵在上颚前部，整个练习过程中保持这个位置</li>
+                <li><strong>吸气4秒</strong>：通过鼻子安静地吸气，心里默数4秒</li>
+                <li><strong>屏息7秒</strong>：屏住呼吸，心里默数7秒</li>
+                <li><strong>呼气8秒</strong>：通过嘴巴完全呼气，发出"呼"的声音，心里默数8秒</li>
+                <li>这是一个完整的呼吸循环，重复进行4-8次循环</li>
+                <li>建议每天练习两次，持续一段时间后，您会发现更容易放松和平静</li>
+            </ol>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 呼吸法练习辅助工具 | 4-7-8呼吸法有助于缓解焦虑和改善睡眠质量</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const timerElement = document.getElementById('timer');
+        const breathIndicator = document.getElementById('breathIndicator');
+        const phaseInhale = document.getElementById('phaseInhale');
+        const phaseHold = document.getElementById('phaseHold');
+        const phaseExhale = document.getElementById('phaseExhale');
+        const cycleCountElement = document.getElementById('cycleCount');
+        
+        // 滑块和值显示
+        const inhaleSlider = document.getElementById('inhaleSlider');
+        const inhaleValue = document.getElementById('inhaleValue');
+        const holdSlider = document.getElementById('holdSlider');
+        const holdValue = document.getElementById('holdValue');
+        const exhaleSlider = document.getElementById('exhaleSlider');
+        const exhaleValue = document.getElementById('exhaleValue');
+        
+        // 按钮
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 练习状态
+        let isRunning = false;
+        let isPaused = false;
+        let currentPhase = 'inhale'; // inhale, hold, exhale
+        let currentTime = 0;
+        let cycleCount = 0;
+        let timerInterval = null;
+        
+        // 呼吸时间设置
+        let inhaleTime = 4;
+        let holdTime = 7;
+        let exhaleTime = 8;
+        
+        // 更新滑块值显示
+        inhaleSlider.addEventListener('input', () => {
+            inhaleValue.textContent = inhaleSlider.value;
+            inhaleTime = parseInt(inhaleSlider.value);
+            updatePhaseTimes();
+        });
+        
+        holdSlider.addEventListener('input', () => {
+            holdValue.textContent = holdSlider.value;
+            holdTime = parseInt(holdSlider.value);
+            updatePhaseTimes();
+        });
+        
+        exhaleSlider.addEventListener('input', () => {
+            exhaleValue.textContent = exhaleSlider.value;
+            exhaleTime = parseInt(exhaleSlider.value);
+            updatePhaseTimes();
+        });
+        
+        // 更新阶段时间显示
+        function updatePhaseTimes() {
+            document.querySelectorAll('.phase-time')[0].textContent = `${inhaleTime}秒`;
+            document.querySelectorAll('.phase-time')[1].textContent = `${holdTime}秒`;
+            document.querySelectorAll('.phase-time')[2].textContent = `${exhaleTime}秒`;
+        }
+        
+        // 开始练习
+        startBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                startBreathing();
+            } else if (isPaused) {
+                resumeBreathing();
+            }
+        });
+        
+        // 暂停练习
+        pauseBtn.addEventListener('click', () => {
+            if (isRunning && !isPaused) {
+                pauseBreathing();
+            }
+        });
+        
+        // 重置练习
+        resetBtn.addEventListener('click', resetBreathing);
+        
+        // 开始呼吸练习
+        function startBreathing() {
+            isRunning = true;
+            isPaused = false;
+            currentPhase = 'inhale';
+            currentTime = inhaleTime;
+            
+            updateTimerDisplay();
+            updatePhaseHighlight();
+            startTimer();
+            
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 进行中...';
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+        }
+        
+        // 继续呼吸练习
+        function resumeBreathing() {
+            isPaused = false;
+            startTimer();
+            
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 进行中...';
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+        }
+        
+        // 暂停呼吸练习
+        function pauseBreathing() {
+            isPaused = true;
+            clearInterval(timerInterval);
+            
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 继续';
+            startBtn.disabled = false;
+        }
+        
+        // 重置呼吸练习
+        function resetBreathing() {
+            isRunning = false;
+            isPaused = false;
+            clearInterval(timerInterval);
+            
+            currentPhase = 'inhale';
+            currentTime = 0;
+            cycleCount = 0;
+            
+            updateTimerDisplay();
+            updatePhaseHighlight();
+            updateCycleCount();
+            
+            breathIndicator.style.transform = 'translate(-50%, -50%) scale(1)';
+            breathIndicator.style.background = 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)';
+            
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始练习';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+        }
+        
+        // 启动计时器
+        function startTimer() {
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                if (currentTime > 0) {
+                    currentTime--;
+                    updateTimerDisplay();
+                } else {
+                    // 切换到下一个阶段
+                    switchPhase();
+                }
+            }, 1000);
+        }
+        
+        // 切换到下一个阶段
+        function switchPhase() {
+            if (currentPhase === 'inhale') {
+                currentPhase = 'hold';
+                currentTime = holdTime;
+            } else if (currentPhase === 'hold') {
+                currentPhase = 'exhale';
+                currentTime = exhaleTime;
+            } else if (currentPhase === 'exhale') {
+                currentPhase = 'inhale';
+                currentTime = inhaleTime;
+                cycleCount++;
+                updateCycleCount();
+            }
+            
+            updatePhaseHighlight();
+            updateBreathAnimation();
+        }
+        
+        // 更新计时器显示
+        function updateTimerDisplay() {
+            timerElement.textContent = currentTime;
+            
+            // 更新呼吸动画
+            updateBreathAnimation();
+        }
+        
+        // 更新呼吸动画
+        function updateBreathAnimation() {
+            let scale = 1;
+            let background = '';
+            
+            if (currentPhase === 'inhale') {
+                // 吸气：圆圈逐渐变大
+                const progress = 1 - (currentTime / inhaleTime);
+                scale = 1 + progress * 0.5; // 从1到1.5
+                background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+            } else if (currentPhase === 'hold') {
+                // 屏息：保持最大
+                scale = 1.5;
+                background = 'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)';
+            } else if (currentPhase === 'exhale') {
+                // 呼气：圆圈逐渐变小
+                const progress = 1 - (currentTime / exhaleTime);
+                scale = 1.5 - progress * 0.5; // 从1.5到1
+                background = 'linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%)';
+            }
+            
+            breathIndicator.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            breathIndicator.style.background = background;
+        }
+        
+        // 更新阶段高亮
+        function updatePhaseHighlight() {
+            // 移除所有活动状态
+            phaseInhale.classList.remove('active');
+            phaseHold.classList.remove('active');
+            phaseExhale.classList.remove('active');
+            
+            // 为当前阶段添加活动状态
+            if (currentPhase === 'inhale') {
+                phaseInhale.classList.add('active');
+            } else if (currentPhase === 'hold') {
+                phaseHold.classList.add('active');
+            } else if (currentPhase === 'exhale') {
+                phaseExhale.classList.add('active');
+            }
+        }
+        
+        // 更新循环计数
+        function updateCycleCount() {
+            cycleCountElement.textContent = cycleCount;
+        }
+        
+        // 初始化
+        function init() {
+            updatePhaseTimes();
+            pauseBtn.disabled = true;
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
